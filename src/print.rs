@@ -10,7 +10,8 @@ enum FileType {
 }
 
 fn get_element_name(path: &str) -> &str {
-    &(path[path.rfind("/").unwrap_or(0) + 1..path.len()])
+    let start = path.rfind("/").map_or(0, |x| x + 1);
+    &(path[start..path.len()])
 }
 
 fn file_type_to_print(file_type: FileType) {
