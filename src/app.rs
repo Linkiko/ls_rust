@@ -1,8 +1,12 @@
 extern crate clap;
 
+use crate::permissions::UnixPermissions;
 use crate::print;
 use crate::search;
+
 use clap::{App, Arg, ArgMatches};
+use std::fs;
+use std::os::unix::fs::PermissionsExt;
 
 struct Params<'a> {
     long: bool,
@@ -26,11 +30,17 @@ fn get_app() -> ArgMatches<'static> {
 }
 
 fn handle_params(params: Params) {
-    let result = search::search(params.arg).unwrap();
+    let mut result = search::search(params.arg).unwrap();
     if params.long == true {
-        println!("Is long")
+        let permissions: Vec<UnixPermissions> = result
+            .iter()
+            .map(|path| UnixPermissions::from_path(path))
+            .collect();
+        for (i, perm) in permissions.iter().enumerate() {
+            println!("{} : {}", result[i].to_str().unwrap(), perm.to_str());
+        }
     }
-    print::print_ls(result);
+    print::print_ls(&mut result);
 }
 
 pub fn launch_app() {

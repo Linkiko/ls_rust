@@ -21,7 +21,7 @@ fn file_type_to_print(file_type: FileType) {
     };
 }
 
-pub fn print_ls(mut entries: Vec<PathBuf>) {
+pub fn print_ls(entries: &mut Vec<PathBuf>) {
     entries.sort();
     for entry in entries {
         if entry.is_dir() {
